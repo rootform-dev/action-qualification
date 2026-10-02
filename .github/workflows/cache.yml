@@ -1,0 +1,62 @@
+name: exact external content cache
+on:
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: external-cache-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  warm:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: rootform-dev/action/setup@aa619a35a674a0be901650379db3b0551ee645ad
+        with:
+          version: 0.1.0-pr.117.1
+      - name: Publish synthetic current-schema content to isolated TLS registry
+        run: node scripts/prepare-registry.mjs
+      - name: Seed excluded derived content before source-cache save
+        run: node scripts/assert-cache.mjs seed
+      - name: Prepare fresh home and persist exact source payload
+        uses: rootform-dev/action/init@aa619a35a674a0be901650379db3b0551ee645ad
+        with:
+          project: external-project
+          locked: 'true'
+      - name: Persist only synthetic selection lock for next job
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: synthetic-lock
+          path: external-project/rootform.lock
+          retention-days: 1
+          if-no-files-found: error
+      - name: Stop owned registry
+        if: always()
+        run: docker rm --force rootform-action-registry || true
+  offline:
+    needs: warm
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: synthetic-lock
+          path: external-project
+      - name: Restore and reverify source without running registry
+        uses: rootform-dev/action/init@aa619a35a674a0be901650379db3b0551ee645ad
+        with:
+          version: 0.1.0-pr.117.1
+          project: external-project
+          locked: 'true'
+          offline: 'true'
+      - name: Prove source cache and exclusion of derived contents
+        run: node scripts/assert-cache.mjs verify

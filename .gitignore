@@ -1,0 +1,8 @@
+node_modules/
+.terraform/
+*.tfplan
+*.tfstate
+*.pem
+*.key
+.rootform/
+.rootform-results/

@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: rootform-dev/action
-          ref: cc457702223d887c9db5da52ba36099ad3e1b4e0
+          ref: 8b026e9c7268a960ed6f9b48ecea404180ddb151
           path: fixtures/action
           sparse-checkout: src
           persist-credentials: false
@@ -43,7 +43,7 @@ jobs:
           bun-version: '1.4.0'
       - name: Generate actual Form with the published release
         id: analyze
-        uses: rootform-dev/action/analyze@cc457702223d887c9db5da52ba36099ad3e1b4e0
+        uses: rootform-dev/action/analyze@8b026e9c7268a960ed6f9b48ecea404180ddb151
         with:
           version: 0.1.0-pr.117.1
           input: fixtures/rootform/examples/playground/shared-data-platform/base/plan.json
@@ -62,7 +62,7 @@ jobs:
       - name: Produce actual negative Policy result
         id: check
         continue-on-error: true
-        uses: rootform-dev/action/check@cc457702223d887c9db5da52ba36099ad3e1b4e0
+        uses: rootform-dev/action/check@8b026e9c7268a960ed6f9b48ecea404180ddb151
         with:
           input: ${{ steps.analyze.outputs.form }}
           policy-pack: fixtures/negative

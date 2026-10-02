@@ -4,8 +4,8 @@ import { appendFileSync, copyFileSync, readFileSync, writeFileSync } from 'node:
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const cliSource = 'a1adfafa66a548b270727cfbce913325e5980f77';
-const actionSource = 'cc457702223d887c9db5da52ba36099ad3e1b4e0';
+const cliSource = '086dc1f16ffe57694ff806df8ff51cf1d0cf072e';
+const actionSource = '8b026e9c7268a960ed6f9b48ecea404180ddb151';
 const source = resolve(process.env.ROOTFORM_ACTION_SOURCE || 'fixtures/action');
 const { combineReports, renderReport, REPORT_MARKER } = await import(pathToFileURL(resolve(source, 'src/report.ts')).href);
 const { readGitHubContext, upsertPullRequestComment } = await import(pathToFileURL(resolve(source, 'src/pull-request.ts')).href);
@@ -33,7 +33,9 @@ if (process.argv[2] === 'assemble') {
   assert.ok(!/\d+ of \d+ (?:entries|evaluations|evidence lines) shown|\(\d+ of \d+ shown\)/.test(markdown));
   assert.ok(markdown.includes('> [!CAUTION]\n> **Verdict: VIOLATED**'));
   assert.ok(markdown.includes('<summary>Instances: 76 added</summary>'));
-  assert.ok(markdown.includes('#### Δ Net change'));
+  for (const heading of ['#### ± Planned changes', '#### ↺ Reported drift', '#### Δ Net change', '#### ▦ Planned architecture', '**? Uncertainty']) {
+    assert.ok(markdown.includes(heading), `missing review typography: ${heading}`);
+  }
   for (const [variable, filename] of [['ROOTFORM_SARIF', 'results.sarif'], ['ROOTFORM_HTML', 'explorer.html']]) {
     copyFileSync(required(variable), `rendered/${filename}`);
   }

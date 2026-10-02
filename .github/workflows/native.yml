@@ -2,6 +2,13 @@ name: published CLI consumers
 on:
   pull_request:
     branches: [dev]
+    paths-ignore:
+      - 'README.md'
+      - 'evidence/**'
+      - '.github/workflows/cache.yml'
+      - '.github/workflows/report.yml'
+      - 'scripts/assert-cache.mjs'
+      - 'scripts/prepare-registry.mjs'
   workflow_dispatch:
 permissions:
   contents: read

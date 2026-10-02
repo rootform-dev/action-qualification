@@ -22,6 +22,8 @@ jobs:
           version: 0.1.0-pr.117.1
       - name: Publish synthetic current-schema content to isolated TLS registry
         run: node scripts/prepare-registry.mjs
+      - name: Seed excluded derived content before source-cache save
+        run: node scripts/assert-cache.mjs seed
       - name: Prepare fresh home and persist exact source payload
         uses: rootform-dev/action/init@aa619a35a674a0be901650379db3b0551ee645ad
         with:
@@ -56,5 +58,5 @@ jobs:
           project: external-project
           locked: 'true'
           offline: 'true'
-      - name: Prove source cache and absence of derived cache
-        run: node -e "const fs=require('node:fs'),assert=require('node:assert/strict'),path=require('node:path');assert.ok(fs.readdirSync(path.join(process.env.ROOTFORM_HOME,'policy-packs')).length);assert.equal(fs.existsSync(path.join(process.env.ROOTFORM_HOME,'cache')),false)"
+      - name: Prove source cache and exclusion of derived contents
+        run: node scripts/assert-cache.mjs verify

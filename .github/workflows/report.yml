@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: rootform-dev/action
-          ref: 17cf0cbefae80ac388b54e0329dd40f3cd0f659e
+          ref: cc457702223d887c9db5da52ba36099ad3e1b4e0
           path: fixtures/action
           sparse-checkout: src
           persist-credentials: false
@@ -43,7 +43,7 @@ jobs:
           bun-version: '1.4.0'
       - name: Generate actual Form with the published release
         id: analyze
-        uses: rootform-dev/action/analyze@17cf0cbefae80ac388b54e0329dd40f3cd0f659e
+        uses: rootform-dev/action/analyze@cc457702223d887c9db5da52ba36099ad3e1b4e0
         with:
           version: 0.1.0-pr.117.1
           input: fixtures/rootform/examples/playground/shared-data-platform/base/plan.json
@@ -57,24 +57,33 @@ jobs:
           GOTOOLCHAIN: go1.26.7
         run: |
           mkdir -p rendered
-          go -C scripts/markdown-review run . "$INPUT_FORM" "$GITHUB_WORKSPACE/rendered/architecture.md" "$GITHUB_WORKSPACE/rendered/form.json"
+          go -C scripts/markdown-review run . run "$INPUT_FORM" "$GITHUB_WORKSPACE/rendered/architecture.md" "$GITHUB_WORKSPACE/rendered/form.json"
           cmp "$INPUT_FORM" rendered/form.json
       - name: Produce actual negative Policy result
         id: check
         continue-on-error: true
-        uses: rootform-dev/action/check@17cf0cbefae80ac388b54e0329dd40f3cd0f659e
+        uses: rootform-dev/action/check@cc457702223d887c9db5da52ba36099ad3e1b4e0
         with:
           input: ${{ steps.analyze.outputs.form }}
           policy-pack: fixtures/negative
           upload-artifact: 'false'
           summary: 'false'
+      - name: Render recorded Policy evidence with the modified public CLI
+        env:
+          INPUT_FORM: ${{ steps.analyze.outputs.form }}
+          POLICY_RESULT: ${{ steps.check.outputs.result }}
+          GOWORK: 'off'
+          GOTOOLCHAIN: go1.26.7
+        run: |
+          go -C scripts/markdown-review run . check "$INPUT_FORM" "$POLICY_RESULT" "$GITHUB_WORKSPACE/rendered/policies.md" "$GITHUB_WORKSPACE/rendered/result.json"
+          cmp "$POLICY_RESULT" rendered/result.json
       - name: Inspect and assemble actual outputs
         env:
           ROOTFORM_OUTPUTS: ${{ toJSON(steps.check.outputs) }}
           ROOTFORM_ACTION_SOURCE: fixtures/action
           ROOTFORM_INPUT_FORM: ${{ steps.analyze.outputs.form }}
           ROOTFORM_ARCHITECTURE: rendered/architecture.md
-          ROOTFORM_POLICY_REPORT: ${{ steps.check.outputs.report }}
+          ROOTFORM_POLICY_REPORT: rendered/policies.md
           ROOTFORM_POLICY_RESULT: ${{ steps.check.outputs.result }}
           ROOTFORM_SARIF: ${{ steps.check.outputs.sarif }}
           ROOTFORM_HTML: ${{ steps.analyze.outputs.html }}

@@ -14,6 +14,9 @@ for (const field of expected) {
   assert.ok(statSync(outputs[field]).size > 0, `${field} file empty`);
 }
 execFileSync('rootform', ['validate', 'form', outputs.form], { stdio: 'pipe' });
+const markdown = readFileSync(outputs.report, 'utf8');
+assert.ok(!markdown.includes('Each list above shows at most'), 'Action must request complete Markdown');
+assert.ok(!/\d+ of \d+ (?:entries|evaluations|evidence lines) shown|\(\d+ of \d+ shown\)/.test(markdown), 'Action Markdown must not contain compact previews');
 assert.equal(outputs.version, '0.1.0-pr.117.1');
 if (expectedCode !== undefined) assert.equal(outputs['exit-code'], expectedCode);
 if (process.env.ROOTFORM_EXPECT_ARTIFACT === 'true') {

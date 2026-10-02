@@ -5,6 +5,8 @@ on:
     paths-ignore:
       - 'README.md'
       - 'evidence/**'
+      - 'scripts/markdown-review/**'
+      - 'scripts/publish-review.ts'
       - '.github/workflows/cache.yml'
       - '.github/workflows/report.yml'
       - 'scripts/assert-cache.mjs'
@@ -49,7 +51,7 @@ jobs:
           persist-credentials: false
       - name: Autonomous analysis and verified installation
         id: analyze
-        uses: rootform-dev/action/analyze@aa619a35a674a0be901650379db3b0551ee645ad
+        uses: rootform-dev/action/analyze@cc457702223d887c9db5da52ba36099ad3e1b4e0
         with:
           version: 0.1.0-pr.117.1
           input: fixtures/rootform/examples/playground/shared-data-platform/base/plan.json
@@ -62,7 +64,7 @@ jobs:
         run: node scripts/assert-output.mjs analyze
       - name: Optional setup reuses exact verified bytes
         id: setup
-        uses: rootform-dev/action/setup@aa619a35a674a0be901650379db3b0551ee645ad
+        uses: rootform-dev/action/setup@cc457702223d887c9db5da52ba36099ad3e1b4e0
       - name: Verify CLI version and executable digest
         shell: bash
         env:
@@ -78,7 +80,7 @@ jobs:
         run: node -e "const fs=require('node:fs'),crypto=require('node:crypto');fs.appendFileSync(process.env.GITHUB_ENV,'ROOTFORM_PREVIOUS_SHA='+crypto.createHash('sha256').update(fs.readFileSync(process.env.ORIGINAL_FORM)).digest('hex')+'\n')"
       - name: Reopen the provided Form
         id: reopen
-        uses: rootform-dev/action/analyze@aa619a35a674a0be901650379db3b0551ee645ad
+        uses: rootform-dev/action/analyze@cc457702223d887c9db5da52ba36099ad3e1b4e0
         with:
           input: ${{ steps.analyze.outputs.form }}
           upload-artifact: 'false'
@@ -90,7 +92,7 @@ jobs:
         run: node scripts/assert-output.mjs analyze
       - name: Compare Form with independently paired plan
         id: compare
-        uses: rootform-dev/action/compare@aa619a35a674a0be901650379db3b0551ee645ad
+        uses: rootform-dev/action/compare@cc457702223d887c9db5da52ba36099ad3e1b4e0
         with:
           before: ${{ steps.analyze.outputs.form }}
           after: fixtures/rootform/examples/playground/shared-data-platform/head/plan.json
@@ -102,7 +104,7 @@ jobs:
         run: node scripts/assert-output.mjs compare
       - name: Evaluate both saved comparison sides
         id: check
-        uses: rootform-dev/action/check@aa619a35a674a0be901650379db3b0551ee645ad
+        uses: rootform-dev/action/check@cc457702223d887c9db5da52ba36099ad3e1b4e0
         with:
           input: ${{ steps.compare.outputs.form }}
           side: both
@@ -115,7 +117,7 @@ jobs:
       - name: Genuine negative verdict retains all evidence
         id: negative
         continue-on-error: true
-        uses: rootform-dev/action/check@aa619a35a674a0be901650379db3b0551ee645ad
+        uses: rootform-dev/action/check@cc457702223d887c9db5da52ba36099ad3e1b4e0
         with:
           input: ${{ steps.analyze.outputs.form }}
           policy-pack: fixtures/negative

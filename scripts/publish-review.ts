@@ -4,7 +4,7 @@ import { appendFileSync, copyFileSync, readFileSync, writeFileSync } from 'node:
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const cliSource = '0851ed8491599f0120ad5b3b28febbaefd7973d5';
+const cliSource = 'a1adfafa66a548b270727cfbce913325e5980f77';
 const actionSource = 'cc457702223d887c9db5da52ba36099ad3e1b4e0';
 const source = resolve(process.env.ROOTFORM_ACTION_SOURCE || 'fixtures/action');
 const { combineReports, renderReport, REPORT_MARKER } = await import(pathToFileURL(resolve(source, 'src/report.ts')).href);
@@ -20,7 +20,7 @@ if (process.argv[2] === 'assemble') {
   assert.equal(process.env.STEP_OUTCOME, 'failure', 'the negative Policy gate must fail');
   const original = required('ROOTFORM_INPUT_FORM');
   assert.deepEqual(readFileSync('rendered/form.json'), readFileSync(original), 'reopening must preserve exact Form bytes');
-  assert.ok(readFileSync('scripts/markdown-review/go.mod', 'utf8').includes('v0.0.0-20261002153428-0851ed849159'));
+  assert.ok(readFileSync('scripts/markdown-review/go.mod', 'utf8').includes(`-${cliSource.slice(0, 12)}`));
   assert.deepEqual(readFileSync('rendered/result.json'), readFileSync(required('ROOTFORM_POLICY_RESULT')), 'Policy rendering must preserve the actual recorded result bytes');
   const report = combineReports([required('ROOTFORM_ARCHITECTURE'), required('ROOTFORM_POLICY_REPORT')], 'rendered');
   assert.equal(report, 'rendered/report.md');
@@ -33,6 +33,7 @@ if (process.argv[2] === 'assemble') {
   assert.ok(!/\d+ of \d+ (?:entries|evaluations|evidence lines) shown|\(\d+ of \d+ shown\)/.test(markdown));
   assert.ok(markdown.includes('> [!CAUTION]\n> **Verdict: VIOLATED**'));
   assert.ok(markdown.includes('<summary>Instances: 76 added</summary>'));
+  assert.ok(markdown.includes('#### Δ Net change'));
   for (const [variable, filename] of [['ROOTFORM_SARIF', 'results.sarif'], ['ROOTFORM_HTML', 'explorer.html']]) {
     copyFileSync(required(variable), `rendered/${filename}`);
   }

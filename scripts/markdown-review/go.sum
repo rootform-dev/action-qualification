@@ -3,6 +3,10 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/rootform-dev/rootform/cli v0.0.0-20261002160814-a1adfafa66a5 h1:asbp+U1A78/NJFmEl3tlWBhakHyZCXZZo7AJfl93bZo=
 github.com/rootform-dev/rootform/cli v0.0.0-20261002160814-a1adfafa66a5/go.mod h1:3mpH3CHzXAPAIutuAhZS7ENGerHCZvyDvZDOJ+3RRLk=
+github.com/rootform-dev/rootform/cli v0.0.0-20261002194947-086dc1f16ffe h1:qN3T4bcjY+3tYX0eNPdDsLqYnfjDMD/Ki9NgqHhe0ZQ=
+github.com/rootform-dev/rootform/cli v0.0.0-20261002194947-086dc1f16ffe/go.mod h1:3mpH3CHzXAPAIutuAhZS7ENGerHCZvyDvZDOJ+3RRLk=
+github.com/rootform-dev/rootform/cli v0.0.0-20261002200054-2641dfbb8fd5 h1:aNifqVM3GxrnqTPOAvs8Fi/901hA5tX/cfPijb9zruY=
+github.com/rootform-dev/rootform/cli v0.0.0-20261002200054-2641dfbb8fd5/go.mod h1:3mpH3CHzXAPAIutuAhZS7ENGerHCZvyDvZDOJ+3RRLk=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
 github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=

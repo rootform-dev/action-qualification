@@ -16,3 +16,7 @@ offline job. Its TLS key and raw input fixtures are never artifacts.
 
 Review job permissions and artifact inventories before changing tests. Keep
 one serialized root reporter per PR; no fork or privileged-target comment.
+
+Fork qualification uses a pull request into the public upstream repository:
+the integrated Action keeps its Form, reports, artifacts and Summary with the
+fork's reduced token, while PR commenting is skipped.

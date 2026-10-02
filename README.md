@@ -20,3 +20,13 @@ one serialized root reporter per PR; no fork or privileged-target comment.
 Fork qualification uses a pull request into the public upstream repository:
 the integrated Action keeps its Form, reports, artifacts and Summary with the
 fork's reduced token, while PR commenting is skipped.
+
+The PR report currently qualifies the public CLI Markdown source at
+`7f0ef17c418f76754ddd20d6a48310a0b257d17b`. A published binary produces the
+actual plan Form, then a small public CLI embedding reopens that saved Form
+and exports Markdown/JSON. Compilation is unavailable in the embedding;
+Form bytes must remain identical. The unchanged single-side negative Policy
+report still comes from the published binary. Shared reporting functions
+from the exact Action commit publish the generated report to Summary and the
+single protected bot comment. This qualifies source presentation, not a new
+distributed candidate. The artifact records both sources and report digests.

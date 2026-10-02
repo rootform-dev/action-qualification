@@ -5,6 +5,8 @@ on:
     paths-ignore:
       - 'README.md'
       - 'evidence/**'
+      - 'scripts/markdown-review/**'
+      - 'scripts/publish-review.ts'
       - '.github/workflows/cache.yml'
       - '.github/workflows/report.yml'
       - 'scripts/assert-cache.mjs'

@@ -2,6 +2,12 @@ name: exact external content cache
 on:
   pull_request:
     branches: [dev]
+    paths-ignore:
+      - 'README.md'
+      - 'evidence/**'
+      - '.github/workflows/report.yml'
+      - 'scripts/markdown-review/**'
+      - 'scripts/publish-review.ts'
   workflow_dispatch:
 permissions:
   contents: read

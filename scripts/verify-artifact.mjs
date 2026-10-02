@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+const directory = process.argv[2];
+const expected = process.argv[3].split(',').sort();
+const actual = readdirSync(directory).sort();
+assert.deepEqual(actual, expected);
+for (const file of actual) assert.ok(statSync(join(directory,file)).isFile());
+assert.ok(!actual.some((file) => /(?:tfplan|tfstate|plan\.json|state\.json|\.terraform|operand-)/.test(file)));
+console.log(`Artifact allowlist verified: ${actual.join(', ')}`);

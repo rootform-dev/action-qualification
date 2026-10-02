@@ -18,7 +18,7 @@ assert.equal(outputs.version, '0.1.0-pr.117.1');
 if (expectedCode !== undefined) assert.equal(outputs['exit-code'], expectedCode);
 if (process.env.ROOTFORM_EXPECT_ARTIFACT === 'true') {
   assert.match(outputs['artifact-id'], /^\d+$/);
-  assert.match(outputs['artifact-url'], /^https:\/\/github\.com\/rootform-dev\/action-qualification\/actions\/runs\/\d+\/artifacts\/\d+$/);
+  assert.equal(outputs['artifact-url'], `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${outputs['artifact-id']}`);
 }
 if (process.env.ROOTFORM_PREVIOUS_FORM) {
   assert.equal(outputs.form, process.env.ROOTFORM_PREVIOUS_FORM, 'saved Form path must be reused');

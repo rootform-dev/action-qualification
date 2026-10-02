@@ -16,7 +16,7 @@ const home = join(root, 'selection-builder-home'); mkdirSync(home);
 const project = 'external-project'; mkdirSync(project);
 const layout = join(root, 'registry-layout');
 const auth = { ROOTFORM_HOME: home, SSL_CERT_FILE: join(tls,'cert.pem') };
-command('rootform',['package','policy-packs','fixtures/negative','--to',layout,'--source-url','https://github.com/rootform-dev/action-qualification','--revision',process.env.GITHUB_SHA,'--licenses','Apache-2.0'],auth);
+command('rootform',['package','policy-packs','fixtures/negative','--to',layout,'--source-url',`${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}`,'--revision',process.env.GITHUB_SHA,'--licenses','Apache-2.0'],auth);
 // Wait only for this owned registry's TLS readiness, with a bounded interval.
 for (let attempt=0; attempt<20; attempt++) {
   try { command('curl',['--fail','--silent','--cacert',join(tls,'cert.pem'),'https://localhost:5000/v2/']); break; }

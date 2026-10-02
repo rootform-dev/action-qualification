@@ -4,7 +4,7 @@ import { appendFileSync, copyFileSync, readFileSync, writeFileSync } from 'node:
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const cliSource = '086dc1f16ffe57694ff806df8ff51cf1d0cf072e';
+const cliSource = '2641dfbb8fd5ed665ace7c23864afba6715cf819';
 const actionSource = '8b026e9c7268a960ed6f9b48ecea404180ddb151';
 const source = resolve(process.env.ROOTFORM_ACTION_SOURCE || 'fixtures/action');
 const { combineReports, renderReport, REPORT_MARKER } = await import(pathToFileURL(resolve(source, 'src/report.ts')).href);

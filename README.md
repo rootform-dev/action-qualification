@@ -22,7 +22,7 @@ the integrated Action keeps its Form, reports, artifacts and Summary with the
 fork's reduced token, while PR commenting is skipped.
 
 The PR report currently qualifies the public CLI Markdown source at
-`086dc1f16ffe57694ff806df8ff51cf1d0cf072e`. A published binary produces the
+`2641dfbb8fd5ed665ace7c23864afba6715cf819`. A published binary produces the
 actual plan Form and negative Policy result, then a small public CLI embedding
 reopens that saved evidence and exports complete Markdown/JSON. Compilation and
 Policy evaluation are unavailable in the embedding. A recorded Policy answer

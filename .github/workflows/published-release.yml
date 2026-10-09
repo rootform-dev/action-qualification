@@ -11,6 +11,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
+      actions: read
       pull-requests: write
     concurrency:
       group: rootform-published-review-${{ github.event.pull_request.number }}
@@ -36,14 +37,25 @@ jobs:
           plan-file: fixtures/rootform/examples/playground/shared-data-platform/base/plan.tfplan
           policy-pack: fixtures/negative
           comment: "true"
-      - name: Confirm the failure is the expected Policy violation
+      - name: Confirm the reported Policy violation
         if: always()
         env:
+          GH_TOKEN: ${{ github.token }}
+          OUTCOME: ${{ steps.review.outcome }}
           EXIT_CODE: ${{ steps.review.outputs.exit-code }}
+          PR: ${{ github.event.pull_request.number }}
           RESULT: ${{ steps.review.outputs.result }}
           VERSION: ${{ steps.review.outputs.version }}
         run: |
           set -euo pipefail
+          test "$OUTCOME" = failure
           test "$VERSION" = 0.2.0
           test "$EXIT_CODE" = 1
-          jq -e '.status == "violated" and .generator.version == "0.2.0"' "$RESULT"
+          jq -e '.status == "violated" and .generator.version == "0.2.0"
+            and ([.architectures[].evaluations[] | select(.outcome == "violated")]
+              | length == 1 and .[0].policy == "qualification.policy.deny-database"
+              and .[0].address == "google_sql_database_instance.data" and .[0].stage == "planned")' "$RESULT"
+          gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- rootform-action-report:v1 -->"))) | {id, body}' |
+            jq -s . > reports.json
+          jq -e 'length == 1 and (.[0].body | contains("qualification.policy.deny-database") and contains("VIOLATED"))' reports.json

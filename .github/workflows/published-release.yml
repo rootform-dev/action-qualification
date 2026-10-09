@@ -1,0 +1,49 @@
+name: published release review
+on:
+  pull_request:
+    branches: [qualification/published-release]
+permissions:
+  contents: read
+jobs:
+  review:
+    name: review with the published release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    concurrency:
+      group: rootform-published-review-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: rootform-dev/rootform
+          ref: v0.2.0
+          path: fixtures/rootform
+          sparse-checkout: examples/playground/shared-data-platform
+          persist-credentials: false
+      # Qualifies the published major tag exactly as a consumer uses it.
+      - name: Review the plan with the published release
+        id: review
+        uses: rootform-dev/action@v1
+        with:
+          version: 0.2.0
+          input: fixtures/rootform/examples/playground/shared-data-platform/base/plan.json
+          plan-file: fixtures/rootform/examples/playground/shared-data-platform/base/plan.tfplan
+          policy-pack: fixtures/negative
+          comment: "true"
+      - name: Confirm the failure is the expected Policy violation
+        if: always()
+        env:
+          EXIT_CODE: ${{ steps.review.outputs.exit-code }}
+          RESULT: ${{ steps.review.outputs.result }}
+          VERSION: ${{ steps.review.outputs.version }}
+        run: |
+          set -euo pipefail
+          test "$VERSION" = 0.2.0
+          test "$EXIT_CODE" = 1
+          jq -e '.status == "violated" and .generator.version == "0.2.0"' "$RESULT"
